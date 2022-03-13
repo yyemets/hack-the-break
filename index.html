@@ -39,7 +39,12 @@
     for (var c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (var r = 0; r < brickRowCount; r++) {
-            bricks[c][r] = { x: 0, y: 0, status: 1 };
+                let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+
+                bricks[c][r] = { 
+                    x: brickX, y: brickY, 
+                    status: 1 };
         }
     }
 
@@ -105,18 +110,23 @@
         ctx.closePath();
     }
     function drawBricks() {
+        var iw=img.width;
+        var ih=img.height;
+        var pieceWidth=iw/brickColumnCount;
+        var pieceHeight=ih/brickRowCount;
+
         for (var c = 0; c < brickColumnCount; c++) {
             for (var r = 0; r < brickRowCount; r++) {
                 if (bricks[c][r].status == 1) {
-                    var brickX = (r * (brickWidth + brickPadding)) + brickOffsetLeft;
-                    var brickY = (c * (brickHeight + brickPadding)) + brickOffsetTop;
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = "#0095DD";
-                    ctx.fill();
-                    ctx.closePath();
+                    ctx.drawImage(
+                      // from the original image
+                      img,
+                      // take the next x,y piece
+                      c*pieceWidth, r*pieceHeight, pieceWidth, pieceHeight,
+                      // draw it on canvas based on the shuffled pieces[] array
+                      // p.col*pieceWidth, p.row*pieceHeight, pieceWidth, pieceHeight
+                      bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight
+                    );
                 }
             }
         }
@@ -179,7 +189,9 @@
         requestAnimationFrame(draw);
     }
 
-    draw();
+    var img=new Image();
+    img.onload=draw;
+    img.src="https://cdn.discordapp.com/attachments/950288098535804939/952377469028159508/IMG_5697.jpg"
 
 </script>
 
